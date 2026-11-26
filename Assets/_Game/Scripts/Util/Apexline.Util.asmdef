@@ -1,0 +1,16 @@
+{
+    "name": "Apexline.Util",
+    "rootNamespace": "Apexline.Util",
+    "references": [
+        "Apexline.Vehicle"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
