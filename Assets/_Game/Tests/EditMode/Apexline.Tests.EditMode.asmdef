@@ -6,7 +6,8 @@
         "UnityEditor.TestRunner",
         "Apexline.Vehicle",
         "Apexline.AI",
-        "Apexline.Race"
+        "Apexline.Race",
+        "Apexline.Track"
     ],
     "includePlatforms": [
         "Editor"
