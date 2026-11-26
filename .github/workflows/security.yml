@@ -69,20 +69,27 @@ jobs:
 
       - name: Forbid unpinned third-party actions
         run: |
-          # First-party actions (actions/*, github/*) and game-ci are trusted by
-          # major tag. Anything else must be pinned to a full commit SHA.
+          # Anchored on real YAML keys ("- uses:" / "uses:"), with comments
+          # stripped and this workflow skipped, so the rule does not match its
+          # own source or prose. actions/*, github/* and game-ci/* are trusted
+          # by major tag; everything else needs a full 40-hex commit SHA.
           rc=0
-          while read -r line; do
-            ref=$(printf '%s' "$line" | sed -n 's/.*uses:[[:space:]]*\([^[:space:]]*\).*/\1/p')
-            [ -z "$ref" ] && continue
-            case "$ref" in
-              actions/*|github/*|game-ci/*) continue ;;
-            esac
-            case "$ref" in
-              *@[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]*) continue ;;
-            esac
-            echo "::error::Third-party action not SHA-pinned: $ref"
-            rc=1
-          done < <(grep -rh "uses:" .github/workflows/ || true)
+          for f in .github/workflows/*.yml; do
+            case "$(basename "$f")" in security.yml) continue ;; esac
+            while IFS= read -r ref; do
+              [ -z "$ref" ] && continue
+              case "$ref" in
+                actions/*|github/*|game-ci/*) continue ;;
+              esac
+              sha="${ref#*@}"
+              if printf '%s' "$sha" | grep -qE '^[0-9a-f]{40}$'; then
+                continue
+              fi
+              echo "::error file=$f::Third-party action not SHA-pinned: $ref"
+              rc=1
+            done < <(sed 's/#.*//' "$f" \
+                     | grep -oE '^[[:space:]]*-?[[:space:]]*uses:[[:space:]]*[^[:space:]]+' \
+                     | sed -E 's/.*uses:[[:space:]]*//')
+          done
           [ "$rc" -eq 0 ] && echo "ok: no unpinned third-party actions"
           exit $rc
