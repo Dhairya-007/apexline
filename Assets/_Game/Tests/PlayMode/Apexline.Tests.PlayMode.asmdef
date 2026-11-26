@@ -1,0 +1,24 @@
+{
+    "name": "Apexline.Tests.PlayMode",
+    "rootNamespace": "Apexline.Tests.PlayMode",
+    "references": [
+        "UnityEngine.TestRunner",
+        "Apexline.Vehicle",
+        "Apexline.AI",
+        "Apexline.Race",
+        "Apexline.Util"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
