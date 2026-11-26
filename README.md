@@ -3,7 +3,7 @@
 A free, open-source mobile racing game built in Unity 6 — arcade handling with
 weight, baked lighting, and a licence you can actually ship.
 
-[![CI](https://github.com/REPLACE_ME/apexline/actions/workflows/ci.yml/badge.svg)](https://github.com/REPLACE_ME/apexline/actions/workflows/ci.yml)
+[![CI](https://github.com/Dhairya-007/apexline/actions/workflows/ci.yml/badge.svg)](https://github.com/Dhairya-007/apexline/actions/workflows/ci.yml)
 [![Code licence: MIT](https://img.shields.io/badge/code-MIT-blue.svg)](LICENSE)
 [![Assets: CC0 / CC-BY](https://img.shields.io/badge/assets-CC0%20%2F%20CC--BY-green.svg)](ASSET-LICENSES.md)
 [![Unity 6 LTS](https://img.shields.io/badge/Unity-6%20LTS-black.svg)](https://unity.com)
@@ -48,7 +48,7 @@ fact. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 ## Quick start
 
 ```bash
-git clone https://github.com/REPLACE_ME/apexline.git
+git clone https://github.com/Dhairya-007/apexline.git
 cd apexline
 git lfs install && git lfs pull
 ./scripts/check-repo-hygiene.sh

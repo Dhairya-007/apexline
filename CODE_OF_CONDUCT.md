@@ -49,11 +49,7 @@ representing the project in public spaces.
 ## Reporting
 
 Report abusive, harassing or otherwise unacceptable behaviour to the maintainers
-at **<REPLACE_WITH_CONTACT_EMAIL>**.
-
-> **Maintainer setup:** replace the address above before making the repository
-> public. Consider a dedicated address rather than a personal one — this line is
-> published to everyone who can read the repo, and will be scraped.
+at **ozadhairya73@gmail.com**.
 
 All complaints will be reviewed and investigated promptly and fairly. Reporters'
 privacy and security will be respected.

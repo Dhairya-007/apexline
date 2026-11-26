@@ -138,5 +138,5 @@ CI is genuinely optional. The hygiene job works without any of this.
 
 - `CODE_OF_CONDUCT.md` — replace `<REPLACE_WITH_CONTACT_EMAIL>`
 - `.github/CODEOWNERS` — uncomment and insert your GitHub handle
-- `.github/ISSUE_TEMPLATE/config.yml` — replace `REPLACE_ME` in both URLs
+- `.github/ISSUE_TEMPLATE/config.yml` — replace `Dhairya-007` in both URLs
 - `README.md` — replace the clone URL

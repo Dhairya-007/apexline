@@ -51,3 +51,31 @@ local.properties
 
 # Claude Code personal overrides (project settings.json IS committed)
 .claude/settings.local.json
+
+# ---------------------------------------------------------------------------
+# Secrets. Belt and braces: scripts/scan-secrets.sh and .githooks/ also block
+# these, because .gitignore does nothing for a file added with `git add -f`.
+# ---------------------------------------------------------------------------
+*.keystore
+*.jks
+*.ulf
+*.p12
+*.pfx
+*.pem
+*.key
+*.mobileprovision
+.env
+.env.*
+!.env.example
+id_rsa
+id_ed25519
+*.ppk
+credentials.json
+serviceAccount*.json
+service-account*.json
+.npmrc
+.pypirc
+secrets.json
+*.secret
+gradle.properties
+keystore.properties
