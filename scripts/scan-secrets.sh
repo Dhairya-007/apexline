@@ -16,7 +16,12 @@ ok ()      { printf '\033[32m ok \033[0m %s\n' "$1"; }
 note ()    { printf '       %s\n' "$1"; }
 
 # Filenames that must never be committed, whatever they contain.
-FORBIDDEN_PATHS='(^|/)(\.env(\..*)?|.*\.keystore|.*\.jks|.*\.ulf|.*\.p12|.*\.pfx|.*\.pem|.*\.key|.*\.mobileprovision|id_rsa|id_ed25519|credentials\.json|serviceAccount.*\.json|\.npmrc|\.pypirc|settings\.local\.json)$'
+# Unity logs are included because Unity writes its launch command line -
+# -accessToken and -hubSessionId included - into them, one argument per
+# line. A multi-line secret cannot be regex-matched without false
+# positives on every GUID and base64 blob, so the log files themselves are
+# forbidden by name instead.
+FORBIDDEN_PATHS='(^|/)(\.env(\..*)?|.*\.keystore|.*\.jks|.*\.ulf|.*\.p12|.*\.pfx|.*\.pem|.*\.key|.*\.mobileprovision|id_rsa|id_ed25519|credentials\.json|serviceAccount.*\.json|\.npmrc|\.pypirc|settings\.local\.json|Editor\.log|Editor-prev\.log|upm\.log|AssetImportWorker.*\.log)$'
 
 # High-confidence secret VALUES. Deliberately strict: a reference such as
 # "${{ secrets.UNITY_PASSWORD }}" is not a secret and must not trip this.
@@ -36,6 +41,9 @@ AccountKey=[A-Za-z0-9+/]{60,}
 (password|passwd|secret|api_?key|auth_?token|access_?token)[\"'\'' ]*[:=][\"'\'' ]*[A-Za-z0-9+/_\-]{12,}
 <License id=
 DeveloperData
+-accessToken[ =][A-Za-z0-9_.\-]{20,}
+-cbmEditorLicense[ =][0-9a-f]{20,}
+-hubSessionId[ =][0-9a-f]{8}-[0-9a-f]{4}
 PAT
 
 # Paths whose matches are documentation about secrets, not secrets.
@@ -55,7 +63,9 @@ scan_blob () {           # $1 = label, $2 = path, $3 = content on stdin
 
   while IFS= read -r pat; do
     [ -z "$pat" ] && continue
-    if printf '%s' "$content" | grep -qE "$pat" 2>/dev/null; then
+    # -e is mandatory: a pattern beginning with "-" (e.g. -accessToken) is
+    # otherwise parsed by grep as an option and silently never matches.
+    if printf '%s' "$content" | grep -qE -e "$pat" 2>/dev/null; then
       problem "$label: $path matches secret pattern /$pat/"
     fi
   done <<< "$PATTERNS"
@@ -115,7 +125,7 @@ if [ "${1:-}" = "--history" ]; then
   else
     while IFS= read -r pat; do
       [ -z "$pat" ] && continue
-      out=$(git grep -I -n -E "$pat" "${revs[@]}" -- 2>/dev/null \
+      out=$(git grep -I -n -E -e "$pat" "${revs[@]}" -- 2>/dev/null \
             | grep -vE ':(scripts/scan-secrets\.sh|docs/SETUP\.md|SECURITY\.md|CLAUDE\.md|CONTRIBUTING\.md|docs/ALLOWED\.md|docs/WORKFLOW\.md|README\.md|\.gitignore|\.github/workflows/|\.githooks/|\.claude/)' || true)
       if [ -n "$out" ]; then
         problem "History matches /$pat/:"

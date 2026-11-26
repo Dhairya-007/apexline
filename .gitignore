@@ -79,3 +79,12 @@ secrets.json
 *.secret
 gradle.properties
 keystore.properties
+
+# Unity logs. Unity writes its launch command line into these, one argument
+# per line, including -accessToken and -hubSessionId. Read them with
+# scripts/unity-log.sh, which redacts, never raw.
+Editor.log
+Editor-prev.log
+upm.log
+AssetImportWorker*.log
+*.log
