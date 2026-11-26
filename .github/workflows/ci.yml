@@ -24,6 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       unity-ready: ${{ steps.probe.outputs.ready }}
+      has-license: ${{ steps.license.outputs.present }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -36,6 +37,21 @@ jobs:
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
           shellcheck -S warning scripts/*.sh
+
+      # The secrets context is not available in a job-level `if`, so presence is
+      # resolved here and passed on as an output. Only emptiness is tested; the
+      # value is never printed, compared in the log, or written anywhere.
+      - name: Check whether a Unity licence is configured
+        id: license
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        run: |
+          if [ -n "${UNITY_LICENSE:-}" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::UNITY_LICENSE is not set, so Unity tests are skipped. See docs/SETUP.md."
+          fi
 
       - name: Probe for an initialised Unity project
         id: probe
@@ -58,6 +74,7 @@ jobs:
     # that hands repository secrets to untrusted code.
     if: |
       needs.hygiene.outputs.unity-ready == 'true' &&
+      needs.hygiene.outputs.has-license == 'true' &&
       (github.event_name != 'pull_request' ||
        github.event.pull_request.head.repo.full_name == github.repository)
     steps:
