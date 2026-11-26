@@ -1,0 +1,18 @@
+# Code owners are requested for review automatically.
+#
+# SETUP: uncomment and replace @your-github-username before pushing. A handle
+# that does not exist silently disables review requests for that path, and a
+# handle that belongs to someone else notifies a stranger on every pull request.
+
+# Everything, by default
+# *                               @your-github-username
+
+# Handling is the part of a racing game that is easiest to break and hardest to
+# notice, so vehicle and AI code warrant a deliberate owner.
+# /Assets/_Game/Scripts/Vehicle/  @your-github-username
+# /Assets/_Game/Scripts/AI/       @your-github-username
+
+# Licensing and CI affect whether the project is shippable at all
+# /ASSET-LICENSES.md              @your-github-username
+# /.github/workflows/             @your-github-username
+# /LICENSE                        @your-github-username
