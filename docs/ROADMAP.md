@@ -25,15 +25,21 @@ monetisation, more than one track, car upgrades, damage, weather.
 - [x] Tuning, performance, architecture and setup docs
 - [x] Claude workflow: `CLAUDE.md`, project skills, slash commands
 
-**Not done: the Unity project itself.** No `ProjectSettings/`, so none of the
-above has compiled in-engine. That is step one of Day 1.
+- [x] Unity 6000.6.11f1 project initialised — URP 17.6.0, Input System 1.20.1,
+      Cinemachine 6.6.0, Test Framework 1.8.0
+- [x] Mobile settings applied: Linear colour space, IL2CPP, ARM64, Vulkan,
+      landscape, 50 Hz physics, URP asset with 1 shadow cascade
+- [x] **All four assemblies compile with zero errors; 13/13 EditMode tests pass**
+- [x] Android Build Support installed (SDK, NDK, OpenJDK)
 
-## Day 1 — Get it compiling and driving
+**Not done: anything you can look at.** No scene, car prefab, track, UI or
+audio. The code is sound but nothing is wired into a GameObject yet.
 
-Follow [`SETUP.md`](SETUP.md): install the editor, create and merge the project,
-fix first-compile errors, commit the generated `.meta` files.
+## Day 1 — Get it driving
 
-Then build the car prefab: `Rigidbody` (mass 1300), four `WheelCollider`s, four
+Project setup is already done, and it compiles. Start at the car prefab.
+
+Build the car prefab: `Rigidbody` (mass 1300), four `WheelCollider`s, four
 visual wheels, wire up `CarController` with the reference values from
 [`TUNING.md`](TUNING.md). Flat plane, a few cones.
 

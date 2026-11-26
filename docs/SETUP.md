@@ -22,46 +22,34 @@ without a signed-in Unity account, so this step needs you.
 
 Download is roughly 8–12 GB with Android support. You have ~836 GB free.
 
-## 2. Create the Unity project
+## 2. The project is already set up
 
-The repository already contains `Assets/_Game/`, but Unity's own
-`ProjectSettings/` and `Packages/` folders do not exist yet, so nothing has
-compiled in-engine. Unity Hub will not create a project into a non-empty folder,
-so create it elsewhere and merge:
+`ProjectSettings/`, `Packages/`, the URP assets and every `.meta` file are
+committed. Open the repo folder from Unity Hub (**Add → Add project from
+disk**) and it will compile.
 
-```bash
-# In Unity Hub: New project > Universal 3D (URP) > name it "apexline-tmp",
-# location ~/Desktop. Let it finish opening once, then quit Unity.
-
-cd "/Users/dhairyaoza/Desktop/Open Source/apexline"
-cp -R ~/Desktop/apexline-tmp/ProjectSettings ./
-cp -R ~/Desktop/apexline-tmp/Packages ./
-cp -R ~/Desktop/apexline-tmp/Assets/Settings ./Assets/   # URP render assets
-
-# Confirm the Unity version got recorded - CI reads this file
-cat ProjectSettings/ProjectVersion.txt
-
-rm -rf ~/Desktop/apexline-tmp
-```
-
-Now open `/Users/dhairyaoza/Desktop/Open Source/apexline` from Unity Hub
-(**Add → Add project from disk**). Unity will import `Assets/_Game/`, generate
-every `.meta` file, and compile the scripts.
-
-**Expect first-compile errors.** None of this code has ever been through a Unity
-compiler. Fix them before anything else.
-
-Then commit the generated files — they belong in the repo:
+It was created headlessly, which is reproducible if you ever need to redo it:
 
 ```bash
-./scripts/check-repo-hygiene.sh      # the .meta checks now actually run
-git add ProjectSettings Packages Assets
-git commit -m "build: initialise Unity project and import generated meta files"
+UNITY=/Applications/Unity/Hub/Editor/6000.6.11f1/Unity.app/Contents/MacOS/Unity
+
+# add/repair packages
+"$UNITY" -batchmode -quit -projectPath . \
+  -executeMethod Apexline.EditorTools.ApexlineSetup.AddPackages
+
+# recreate URP assets and reapply mobile settings
+"$UNITY" -batchmode -quit -projectPath . \
+  -executeMethod Apexline.EditorTools.ApexlineConfigure.Run
+
+# run the EditMode tests without opening the editor
+"$UNITY" -batchmode -projectPath . -runTests -testPlatform EditMode \
+  -testResults /tmp/results.xml
 ```
 
-## 3. Project settings to change immediately
+## 3. Project settings — already applied
 
-**Edit → Project Settings:**
+`ApexlineConfigure.Run` set these and they are committed. Listed so you know
+what is in force, and because Linear colour space is painful to change later:
 
 - **Player → Other Settings**
   - Color Space: **Linear** (this one is painful to change later)

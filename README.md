@@ -8,9 +8,10 @@ weight, baked lighting, and a licence you can actually ship.
 [![Assets: CC0 / CC-BY](https://img.shields.io/badge/assets-CC0%20%2F%20CC--BY-green.svg)](ASSET-LICENSES.md)
 [![Unity 6 LTS](https://img.shields.io/badge/Unity-6%20LTS-black.svg)](https://unity.com)
 
-> **Status: pre-alpha.** The gameplay systems are written and unit-tested, but
-> the Unity project itself has not been created yet, so nothing has compiled
-> in-engine. See [`docs/ROADMAP.md`](docs/ROADMAP.md) for exactly what exists.
+> **Status: pre-alpha.** The Unity 6 project is set up and compiling — all four
+> assemblies build with zero errors and all 13 EditMode tests pass. There is no
+> track, car prefab, UI or audio yet, so it is not playable.
+> See [`docs/ROADMAP.md`](docs/ROADMAP.md) for exactly what exists.
 
 ## Why this exists
 
