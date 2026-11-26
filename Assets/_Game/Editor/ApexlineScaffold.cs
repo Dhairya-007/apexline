@@ -187,8 +187,12 @@ namespace Apexline.EditorTools
             car.steerFalloffSpeedKph = 220f;
             car.steerRateDegPerSec = 160f;
             car.counterSteerAssist = 0.35f;
-            car.antiRollFront = 9000f;
-            car.antiRollRear = 7000f;
+            // Softened from 9000/7000, which held body roll to 1.7 degrees at
+            // 1.3 g - near-rigid, and the main reason the car read as a go-kart
+            // rather than something with mass. The 1.29 front/rear ratio is
+            // preserved, so the understeer balance is unchanged.
+            car.antiRollFront = 2200f;
+            car.antiRollRear = 1700f;
             car.downforceAtTopSpeed = 6500f;
             car.tractionControl = 0.40f;
 
@@ -217,16 +221,21 @@ namespace Apexline.EditorTools
             spring.targetPosition = 0.5f;
             wc.suspensionSpring = spring;
 
+            // Stiffness values are the measured result of the Day 2 benchmarks,
+            // not a guess. At the original 2.0/2.2 the car pulled 2.34 g and
+            // stopped from 100 km/h in 22.9 m - both well outside road-car
+            // physics, and so grippy that nothing ever slid, which makes the
+            // driver assists pointless. See docs/TUNING.md for the before/after.
             WheelFrictionCurve fwd = wc.forwardFriction;
             fwd.extremumSlip = 0.40f;  fwd.extremumValue = 1.00f;
             fwd.asymptoteSlip = 0.80f; fwd.asymptoteValue = 0.75f;
-            fwd.stiffness = 2.0f;
+            fwd.stiffness = 1.4f;
             wc.forwardFriction = fwd;
 
             WheelFrictionCurve side = wc.sidewaysFriction;
             side.extremumSlip = 0.25f;  side.extremumValue = 1.00f;
             side.asymptoteSlip = 0.50f; side.asymptoteValue = 0.75f;
-            side.stiffness = 2.2f;
+            side.stiffness = 1.3f;
             wc.sidewaysFriction = side;
         }
 
@@ -239,7 +248,10 @@ namespace Apexline.EditorTools
             // --- ground -------------------------------------------------
             GameObject ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
             ground.name = "Ground";
-            ground.transform.localScale = new Vector3(50f, 1f, 50f);   // 500 m square
+            // 4 km square. 500 m was not enough: at 260 km/h the car leaves the
+            // edge in about 3.5 s, and a top-speed benchmark then measures
+            // free-fall rather than the car.
+            ground.transform.localScale = new Vector3(400f, 1f, 400f);
             ground.GetComponent<MeshRenderer>().sharedMaterial = groundMat;
             ground.isStatic = true;
 
@@ -267,6 +279,12 @@ namespace Apexline.EditorTools
             var chase = camGo.GetComponent<ChaseCamera>();
             if (chase == null) chase = camGo.AddComponent<ChaseCamera>();
             chase.target = car.GetComponent<CarController>();
+
+            // Telemetry overlay, so handling can be judged against numbers
+            // rather than adjectives. F1 hides it.
+            var telem = camGo.GetComponent<VehicleTelemetry>();
+            if (telem == null) telem = camGo.AddComponent<VehicleTelemetry>();
+            telem.car = car.GetComponent<CarController>();
 
             // --- cone slalom --------------------------------------------
             var cones = new GameObject("ConeSlalom");
