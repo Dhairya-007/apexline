@@ -8,7 +8,10 @@
 set -uo pipefail
 
 fail=0
-problem () { printf '\033[31mFAIL\033[0m %s\n' "$1"; fail=1; }
+# fail is a COUNT, not a flag: each section compares the count before and
+# after itself to decide whether to print its own ok line. A flag would
+# make every later section report ok once anything had failed.
+problem () { printf '\033[31mFAIL\033[0m %s\n' "$1"; fail=$((fail + 1)); }
 ok ()      { printf '\033[32m ok \033[0m %s\n' "$1"; }
 note ()    { printf '       %s\n' "$1"; }
 
@@ -97,16 +100,30 @@ if [ "${1:-}" = "--history" ]; then
 
   echo "--- 5. Secret values anywhere in history ---"
   before=$fail
-  while IFS= read -r pat; do
-    [ -z "$pat" ] && continue
-    out=$(git grep -I -n -E "$pat" $(git rev-list --all) -- 2>/dev/null \
-          | grep -vE ':(scripts/scan-secrets\.sh|docs/SETUP\.md|SECURITY\.md|CLAUDE\.md|CONTRIBUTING\.md|\.gitignore|\.github/workflows/|\.githooks/|\.claude/commands/hygiene\.md)' || true)
-    if [ -n "$out" ]; then
-      problem "History matches /$pat/:"
-      echo "$out" | head -5 | while read -r l; do note "$l"; done
-    fi
-  done <<< "$PATTERNS"
-  [ "$fail" -eq "$before" ] && ok "No secret values in any commit"
+
+  # Collected into an array rather than left unquoted: word splitting on
+  # $(git rev-list --all) happens to work, but breaks silently the moment a ref
+  # contains whitespace. Built with a read loop, not mapfile, so this still
+  # runs on the bash 3.2 that ships with macOS.
+  revs=()
+  while IFS= read -r r; do
+    [ -n "$r" ] && revs+=("$r")
+  done < <(git rev-list --all 2>/dev/null)
+
+  if [ "${#revs[@]}" -eq 0 ]; then
+    ok "No commits to scan"
+  else
+    while IFS= read -r pat; do
+      [ -z "$pat" ] && continue
+      out=$(git grep -I -n -E "$pat" "${revs[@]}" -- 2>/dev/null \
+            | grep -vE ':(scripts/scan-secrets\.sh|docs/SETUP\.md|SECURITY\.md|CLAUDE\.md|CONTRIBUTING\.md|docs/ALLOWED\.md|docs/WORKFLOW\.md|README\.md|\.gitignore|\.github/workflows/|\.githooks/|\.claude/)' || true)
+      if [ -n "$out" ]; then
+        problem "History matches /$pat/:"
+        echo "$out" | head -5 | while read -r l; do note "$l"; done
+      fi
+    done <<< "$PATTERNS"
+    [ "$fail" -eq "$before" ] && ok "No secret values in any commit"
+  fi
 fi
 
 echo
