@@ -34,16 +34,28 @@ jobs:
             exit 1
           fi
 
-      # Android builds exhaust the default runner disk. This reclaims ~20 GB.
+      # Android builds exhaust the default runner disk. Done inline rather than
+      # with a third-party action: this needs no supply-chain trust and no
+      # version pin to maintain. Reclaims roughly 25 GB.
+      # GameCI builds inside unityci/editor, which carries its own Android SDK,
+      # so the runner's own SDK and toolchains are safe to delete.
       - name: Free disk space
         if: ${{ (github.event.inputs.platform || 'Android') == 'Android' }}
-        uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
-        with:
-          tool-cache: true
-          android: false      # keep the Android SDK; the build needs it
-          large-packages: true
-          docker-images: true
-          swap-storage: true
+        run: |
+          echo "Before:" && df -h /
+          sudo rm -rf \
+            /usr/share/dotnet \
+            /usr/local/lib/android \
+            /opt/ghc \
+            /usr/local/.ghcup \
+            /usr/local/share/powershell \
+            /usr/local/share/chromium \
+            /usr/local/lib/node_modules \
+            "${AGENT_TOOLSDIRECTORY:-/opt/hostedtoolcache}" || true
+          sudo docker image prune --all --force || true
+          sudo swapoff -a || true
+          sudo rm -f /mnt/swapfile || true
+          echo "After:" && df -h /
 
       - name: Cache Library
         uses: actions/cache@v4
