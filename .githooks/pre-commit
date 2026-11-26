@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Blocks a commit that would introduce a secret or a licensing/GUID mistake.
+# Bypass with --no-verify only if you understand exactly why.
+set -uo pipefail
+cd "$(git rev-parse --show-toplevel)" || exit 1
+
+echo "pre-commit: scanning for secrets..."
+./scripts/scan-secrets.sh || {
+  echo
+  echo "COMMIT BLOCKED: a secret was found in what you are committing."
+  exit 1
+}
+
+echo "pre-commit: repo hygiene..."
+./scripts/check-repo-hygiene.sh || {
+  echo
+  echo "COMMIT BLOCKED: licensing, LFS or .meta problem. See the output above."
+  exit 1
+}

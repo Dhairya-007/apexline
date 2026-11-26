@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Last line of defence. Audits EVERY commit being pushed, not just the newest,
+# because once a repo is public its history is public permanently - deleting a
+# secret in a later commit does not unpublish it.
+set -uo pipefail
+cd "$(git rev-parse --show-toplevel)" || exit 1
+
+echo "pre-push: auditing full history for secrets..."
+./scripts/scan-secrets.sh --history || {
+  echo
+  echo "PUSH BLOCKED: a secret exists somewhere in history."
+  echo "Rewrite it out (git filter-repo) AND rotate the credential."
+  echo "Removing the file in a new commit is NOT enough."
+  exit 1
+}
