@@ -134,9 +134,20 @@ Two things to know before you do this:
 
 CI is genuinely optional. The hygiene job works without any of this.
 
-## Updating the repo settings before going public
+## Enable the secret guard (required, one command)
 
-- `CODE_OF_CONDUCT.md` — replace `<REPLACE_WITH_CONTACT_EMAIL>`
-- `.github/CODEOWNERS` — uncomment and insert your GitHub handle
-- `.github/ISSUE_TEMPLATE/config.yml` — replace `Dhairya-007` in both URLs
-- `README.md` — replace the clone URL
+Git does not install committed hooks automatically:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+Without this the pre-commit and pre-push secret scans do nothing. Verify:
+
+```bash
+git config core.hooksPath          # must print .githooks
+./scripts/scan-secrets.sh --history
+```
+
+See [`ALLOWED.md`](ALLOWED.md) for what is and is not allowed in the repo, and
+[`WORKFLOW.md`](WORKFLOW.md) for the day-to-day loop.

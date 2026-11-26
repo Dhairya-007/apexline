@@ -67,6 +67,8 @@ getting a build onto an Android phone.
 | [`docs/TUNING.md`](docs/TUNING.md) | Handling symptom → parameter, with reference values |
 | [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md) | 60 fps budget, device profiling, known hot paths |
 | [`docs/ROADMAP.md`](docs/ROADMAP.md) | Honest scope and the day-by-day plan |
+| [`docs/WORKFLOW.md`](docs/WORKFLOW.md) | The day-to-day loop and daily commands |
+| [`docs/ALLOWED.md`](docs/ALLOWED.md) | What may and may not go in the repo |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | Conventions, branches, review expectations |
 | [`ASSET-LICENSES.md`](ASSET-LICENSES.md) | Asset policy and the licence registry |
 
@@ -85,6 +87,29 @@ docs/                           everything above
 Each script folder is its own assembly, layered one-directionally
 (`Vehicle` ← `AI` ← `Race`), so a change recompiles one assembly instead of the
 project and the layering cannot be violated by accident.
+
+## Security guard rails
+
+No credential has ever been committed, and the repo is built so it stays that
+way:
+
+- **`scripts/scan-secrets.sh`** — rejects forbidden filenames and
+  high-confidence secret values (AWS, GitHub, Google, Slack, OpenAI/Anthropic,
+  GitLab, JWTs, Azure, PEM keys, Unity `.ulf`)
+- **Pre-commit hook** — blocks the commit
+- **Pre-push hook** — re-audits the *entire* history, because a public repo's
+  history is public permanently
+- **Security workflow** — full-history scan, plus audits that forbid
+  `pull_request_target`, require an explicit `permissions:` block in every
+  workflow, and require third-party actions to be SHA-pinned
+- **Hardened `.gitignore`** covering keystores, `.ulf`, `.env`, certificates,
+  SSH keys, service accounts and `gradle.properties`
+
+Enable the hooks after cloning — git will not do it for you:
+
+```bash
+git config core.hooksPath .githooks
+```
 
 ## Contributing
 
