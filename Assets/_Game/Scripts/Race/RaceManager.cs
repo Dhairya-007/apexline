@@ -58,10 +58,16 @@ namespace Apexline.Race
         void Awake()
         {
             AutoRegisterCars();
-            PlaceOnGrid();
         }
 
-        void Start() => StartCoroutine(RunCountdown());
+        void Start()
+        {
+            // Grid placement happens in Start, not Awake: it writes to each
+            // car's Rigidbody, and Awake order between components is not
+            // guaranteed. Start runs only after every Awake has completed.
+            PlaceOnGrid();
+            StartCoroutine(RunCountdown());
+        }
 
         void AutoRegisterCars()
         {
@@ -111,6 +117,7 @@ namespace Apexline.Race
         {
             foreach (var r in _racers)
             {
+                if (r.car == null || r.car.Body == null) continue;
                 r.car.Body.isKinematic = frozen;
                 if (frozen) r.car.Input = CarInput.Idle;
 

@@ -70,7 +70,12 @@ namespace Apexline.Vehicle
         public float MaxLateralSlip { get; private set; }
         public float MaxForwardSlip { get; private set; }
         public bool IsGrounded { get; private set; }
-        public Rigidbody Body => _rb;
+        /// <summary>
+        /// The body. Resolved lazily because another component's Awake can run
+        /// before ours - RaceManager placing cars on the grid did exactly that,
+        /// and a null here is a NullReferenceException in someone else's code.
+        /// </summary>
+        public Rigidbody Body => _rb != null ? _rb : (_rb = GetComponent<Rigidbody>());
 
         const int GearCount = 6;
 
@@ -289,8 +294,13 @@ namespace Apexline.Vehicle
 
         public void ResetTo(Vector3 position, Quaternion rotation)
         {
-            _rb.linearVelocity = Vector3.zero;
-            _rb.angularVelocity = Vector3.zero;
+            // Body, not _rb: this is called from other components' Awake.
+            Rigidbody rb = Body;
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
             transform.SetPositionAndRotation(position, rotation);
             _currentSteerAngle = 0f;
             Input = CarInput.Idle;

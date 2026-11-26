@@ -33,6 +33,7 @@ namespace Apexline.EditorTools
         const float WheelBaseHalf = 1.35f;  // half the wheelbase
         const float WheelY       = -0.1f;   // local height of the wheel centres
 
+        [MenuItem("Apexline/Build Car Prefab + Flat Test Scene", false, 21)]
         public static void Build()
         {
             int failed = 0;

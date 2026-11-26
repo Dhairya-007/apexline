@@ -25,6 +25,7 @@ namespace Apexline.EditorTools
             "com.unity.test-framework",            // EditMode tests
         };
 
+        [MenuItem("Apexline/Add Required Packages", false, 42)]
         public static void AddPackages()
         {
             int failed = 0;

@@ -24,6 +24,7 @@ namespace Apexline.EditorTools
         const string RendererPath  = SettingsDir + "/Apexline_Renderer.asset";
         const string PipelinePath  = SettingsDir + "/Apexline_URP.asset";
 
+        [MenuItem("Apexline/Reapply Project Settings", false, 41)]
         public static void Run()
         {
             int failed = 0;
