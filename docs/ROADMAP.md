@@ -44,8 +44,13 @@ monetisation, more than one track, car upgrades, damage, weather.
       elevation, barriers, 147-node racing line, 4 sectors, 6-car grid
 - [x] **AI completes a full lap**, verified in PlayMode
 
-**Not done: UI, audio, VFX, opponents.** The circuit is drivable and laps are
-counted, but nothing is displayed and you race alone.
+- [x] **Five AI opponents** with spread skill, racing the circuit
+- [x] **Race HUD** — lap, position, lap times, countdown, results table
+- [x] 22 PlayMode tests including a verified six-car race
+- [x] Headless player builds for WebGL, macOS and Android
+
+**Not done: audio, baked lighting, VFX.** It is a playable race in silence,
+lit in real time. That is Day 4 and Day 6.
 
 ## Day 1 — ✅ Done
 
@@ -113,13 +118,26 @@ The highest-payoff day after Day 2. In order:
 **Done when:** a screenshot looks like something you would tap in a store
 listing.
 
-## Day 5 — Racing
+## Day 5 — ✅ Done
+
+Five AI opponents and the HUD, built by `Apexline > Build Race` and verified by
+22 PlayMode tests. Leader covers 145 of 147 waypoints in 70 s; field spread 43
+waypoints; first lap at 92 s.
+
+Known issue: with traffic the AI runs about 48% of samples off the ideal line,
+up from 0% alone. Avoidance pushes cars wide. They still lap and stay upright.
+
+<details><summary>What Day 5 originally called for</summary>
+
+### Racing
 
 Lay out the grid, wire `RaceManager`, place five AI cars with varied `skill`,
 tune `AIDriver` against the AI table in `TUNING.md`.
 
 **Done when:** a three-lap race against five AI finishes with correct standings
 and nobody stuck on a barrier.
+
+</details>
 
 ## Day 6 — UI, audio, VFX
 
