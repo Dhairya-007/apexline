@@ -88,3 +88,7 @@ Editor-prev.log
 upm.log
 AssetImportWorker*.log
 *.log
+
+# Unity 6 generates .slnx (the new solution format) alongside the old .sln
+*.slnx
+.vscode/

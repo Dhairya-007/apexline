@@ -1,7 +1,9 @@
 {
     "name": "Apexline.Vehicle",
     "rootNamespace": "Apexline.Vehicle",
-    "references": [],
+    "references": [
+        "Unity.InputSystem"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

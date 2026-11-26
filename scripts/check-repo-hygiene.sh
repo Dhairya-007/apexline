@@ -64,12 +64,27 @@ fi
 # --- 4. Every Unity asset needs its .meta committed ------------------------
 # A missing .meta makes Unity regenerate the GUID, which silently breaks every
 # reference to that asset for everyone else on the team.
+# Unity's own asset-ignore rules: it never imports, and never writes a .meta
+# for, a path where any component starts with "." or ends with "~", or that is
+# named "cvs", or ends in ".tmp". Requiring a .meta for those would demand a
+# file Unity refuses to create.
+unity_ignores () {
+  case "$1" in
+    .*|*/.*)   return 0 ;;   # dotfile or anything under a dot-folder
+    *~)        return 0 ;;   # *~ already covers */*~
+    *.tmp)     return 0 ;;
+    cvs|*/cvs) return 0 ;;
+  esac
+  return 1
+}
+
 missing_meta=""
 while read -r f; do
   [ -z "$f" ] && continue
   case "$f" in
     *.meta) continue ;;
   esac
+  unity_ignores "$f" && continue
   if ! git ls-files --error-unmatch "${f}.meta" >/dev/null 2>&1; then
     missing_meta="${missing_meta}${f}"$'\n'
   fi
@@ -87,9 +102,24 @@ orphan_meta=""
 while read -r m; do
   [ -z "$m" ] && continue
   base="${m%.meta}"
-  if ! git ls-files --error-unmatch "$base" >/dev/null 2>&1; then
-    orphan_meta="${orphan_meta}${m}"$'\n'
+
+  # A tracked file is obviously fine.
+  if git ls-files --error-unmatch "$base" >/dev/null 2>&1; then
+    continue
   fi
+
+  # Unity writes a .meta for every FOLDER too, and git cannot track a
+  # directory - an empty one has no tracked file at all. A directory .meta is
+  # legitimate whenever the directory exists on disk, or anything is tracked
+  # beneath it.
+  if [ -d "$base" ]; then
+    continue
+  fi
+  if [ -n "$(git ls-files -- "$base/" 2>/dev/null)" ]; then
+    continue
+  fi
+
+  orphan_meta="${orphan_meta}${m}"$'\n'
 done < <(git ls-files 'Assets/*.meta' || true)
 
 if [ -n "${orphan_meta//[$'\n']/}" ]; then

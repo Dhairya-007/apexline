@@ -1,0 +1,2 @@
+# Placeholder so this folder survives a clone.
+# Unity writes a .meta for it; git cannot track an empty directory.
