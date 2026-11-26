@@ -7,7 +7,9 @@
         "Apexline.AI",
         "Apexline.Race",
         "Apexline.Util",
-        "Apexline.Track"
+        "Apexline.Track",
+        "Apexline.UI",
+        "UnityEngine.UI"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -32,17 +32,28 @@ namespace Apexline.Tests.PlayMode
             yield return null;
             yield return null;
 
-            _car = Object.FindFirstObjectByType<CarController>();
+            // Pick the PLAYER car specifically, not whichever CarController
+            // turns up first. The circuit now has five AI opponents, and
+            // FindFirstObjectByType could return one of them - adding a second
+            // AIDriver to a car that already has one leaves two drivers writing
+            // CarInput each frame, and the car goes nowhere.
+            foreach (var c in Object.FindObjectsByType<CarController>(FindObjectsSortMode.None))
+            {
+                if (c.GetComponent<AIDriver>() == null) { _car = c; break; }
+            }
             _path = Object.FindFirstObjectByType<WaypointPath>();
             _race = Object.FindFirstObjectByType<RaceManager>();
 
-            Assert.IsNotNull(_car, "no car in the circuit scene");
+            Assert.IsNotNull(_car, "no player car in the circuit scene");
             Assert.IsNotNull(_path, "no racing line in the circuit scene");
 
             // Replace the human driver with an AI pilot.
             var pd = _car.GetComponent<PlayerDriver>();
             if (pd != null) Object.Destroy(pd);
             yield return null;
+
+            Assert.IsNull(_car.GetComponent<AIDriver>(),
+                "the chosen car already has an AIDriver; it is not the player car");
 
             _ai = _car.gameObject.AddComponent<AIDriver>();
             _ai.path = _path;
