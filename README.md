@@ -15,6 +15,16 @@ weight, baked lighting, and a licence you can actually ship.
 > baked lighting yet.
 > See [`docs/ROADMAP.md`](docs/ROADMAP.md) for exactly what exists.
 
+## Play it
+
+**▶ [dhairya-007.github.io/apexline](https://dhairya-007.github.io/apexline/)** —
+runs in the browser, no install. ~15 MB download.
+
+**W** throttle · **S** brake · **A/D** steer · **Space** handbrake · **F1** telemetry
+
+> Unity WebGL is slower than a native build and the first load takes a moment.
+> For the best frame rate, build locally: `Apexline > Build > macOS`.
+
 ## Why this exists
 
 Most open-source Unity games are unshippable for a reason nobody notices until
