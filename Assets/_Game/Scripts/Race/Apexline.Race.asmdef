@@ -1,0 +1,17 @@
+{
+    "name": "Apexline.Race",
+    "rootNamespace": "Apexline.Race",
+    "references": [
+        "Apexline.Vehicle",
+        "Apexline.AI"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
