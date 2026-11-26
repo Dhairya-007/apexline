@@ -25,6 +25,13 @@ namespace Apexline.EditorTools
             "com.unity.test-framework",            // EditMode tests
         };
 
+        // com.unity.ugui is deliberately NOT in that list. It ships bundled
+        // with the editor (BuiltInPackages, 2.6.0 here), so it is declared
+        // directly in Packages/manifest.json and resolves locally with no
+        // download. Client.Add would instead resolve the public registry,
+        // whose newest com.unity.ugui is an experimental 3.0.0-exp build that
+        // declares no support for this editor.
+
         [MenuItem("Apexline/Add Required Packages", false, 42)]
         public static void AddPackages()
         {
