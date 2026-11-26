@@ -1,0 +1,71 @@
+name: Build
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: Target platform
+        type: choice
+        default: Android
+        options: [Android, StandaloneOSX, StandaloneWindows64, StandaloneLinux64, WebGL]
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build ${{ github.event.inputs.platform || 'Android' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Bail out if the Unity project is not initialised
+        run: |
+          if [ ! -f ProjectSettings/ProjectVersion.txt ]; then
+            echo "::error::No Unity project found. See docs/SETUP.md."
+            exit 1
+          fi
+
+      # Android builds exhaust the default runner disk. This reclaims ~20 GB.
+      - name: Free disk space
+        if: ${{ (github.event.inputs.platform || 'Android') == 'Android' }}
+        uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
+        with:
+          tool-cache: true
+          android: false      # keep the Android SDK; the build needs it
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
+      - name: Cache Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-${{ github.event.inputs.platform || 'Android' }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ github.event.inputs.platform || 'Android' }}-
+
+      - name: Build
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: ${{ github.event.inputs.platform || 'Android' }}
+          # Debug builds only. Release signing needs androidKeystoreBase64 and
+          # friends as secrets; see docs/SETUP.md before enabling that.
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ github.event.inputs.platform || 'Android' }}
+          path: build
+          retention-days: 14
