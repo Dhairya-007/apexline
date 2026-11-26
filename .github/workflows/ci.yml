@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# A new push to the same ref cancels the previous run. Unity jobs are slow and
+# minutes are finite on the free tier.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  checks: write        # required for unity-test-runner to publish a check run
+
+jobs:
+  # Runs for everyone, including pull requests from forks, because it needs no
+  # Unity licence and therefore no repository secrets.
+  hygiene:
+    name: Repo hygiene
+    runs-on: ubuntu-latest
+    outputs:
+      unity-ready: ${{ steps.probe.outputs.ready }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false          # hygiene checks read pointers, not file contents
+
+      - name: Run hygiene checks
+        run: ./scripts/check-repo-hygiene.sh
+
+      - name: Validate shell scripts
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
+          shellcheck -S warning scripts/*.sh
+
+      - name: Probe for an initialised Unity project
+        id: probe
+        run: |
+          if [ -f ProjectSettings/ProjectVersion.txt ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+            echo "Unity version: $(head -1 ProjectSettings/ProjectVersion.txt)"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No ProjectSettings/ProjectVersion.txt yet - Unity jobs will be skipped."
+          fi
+
+  test:
+    name: Unity tests
+    needs: hygiene
+    runs-on: ubuntu-latest   # GameCI test runner is Linux-only
+    # Secrets are not exposed to pull requests from forks, so a licensed job
+    # would fail there with a confusing error. Skip it instead; the hygiene job
+    # still gates those contributions. Never move this to pull_request_target -
+    # that hands repository secrets to untrusted code.
+    if: |
+      needs.hygiene.outputs.unity-ready == 'true' &&
+      (github.event_name != 'pull_request' ||
+       github.event.pull_request.head.repo.full_name == github.repository)
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Cache Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          # The cache is immutable per key, so the content hash is what makes
+          # saves land. Platform stays in the key: artifacts are not portable.
+          key: Library-test-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-test-
+
+      - name: EditMode and PlayMode tests
+        id: tests
+        uses: game-ci/unity-test-runner@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          testMode: All
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          # Coverage has caused PlayMode SIGSEGV crashes on Unity 6. Turn it on
+          # once the toolchain is known-good, not before.
+          coverageEnabled: false
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: ${{ steps.tests.outputs.artifactsPath }}
+          retention-days: 14
