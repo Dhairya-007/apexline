@@ -1,0 +1,83 @@
+name: Bug report
+description: Something behaves incorrectly
+labels: [bug, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Handling complaints are welcome, but they belong in **Handling feedback**
+        instead — "the car feels bad" is a tuning discussion, not a bug.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you saw, and what you expected instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Vehicle physics / handling
+        - AI driver
+        - Race rules (laps, positions, timing)
+        - Input / touch controls
+        - Rendering / performance
+        - UI / HUD
+        - Audio
+        - Build or CI
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: unity-version
+    attributes:
+      label: Unity version
+      placeholder: e.g. 6000.2.11f1
+    validations:
+      required: true
+
+  - type: input
+    id: platform
+    attributes:
+      label: Platform and device
+      placeholder: e.g. Android 15, Pixel 8 / macOS 27, M5 Pro, Editor
+    validations:
+      required: true
+
+  - type: input
+    id: commit
+    attributes:
+      label: Commit SHA or version tag
+      placeholder: e.g. 1ad659d or v0.2.0
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console output or stack trace
+      render: text
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I reproduced this on a clean clone, or after deleting Library/
+          required: false
+        - label: I searched existing issues
+          required: true

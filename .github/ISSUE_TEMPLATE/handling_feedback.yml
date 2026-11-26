@@ -1,0 +1,53 @@
+name: Handling feedback
+description: The car feels wrong — too loose, too grippy, too slow to react
+labels: [handling, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Handling is subjective, so specifics matter far more than adjectives.
+        Read `docs/TUNING.md` first — it names the parameter behind each symptom.
+
+  - type: dropdown
+    id: symptom
+    attributes:
+      label: Symptom
+      options:
+        - Understeer — will not turn in
+        - Oversteer / snap spin — rear steps out and cannot be caught
+        - Rolls over or lifts a wheel
+        - Steering feels laggy or vague
+        - Steering feels twitchy or nervous
+        - Brakes lock or the car will not slow down
+        - Will not put power down out of corners
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: speed
+    attributes:
+      label: Speed range where it happens
+      placeholder: e.g. above 180 km/h, or only under 60 km/h
+    validations:
+      required: true
+
+  - type: input
+    id: corner
+    attributes:
+      label: Where on the track
+      placeholder: e.g. turn 3 hairpin, over the kerbs at turn 7
+
+  - type: dropdown
+    id: input-method
+    attributes:
+      label: Input method
+      options: [Tilt, On-screen wheel, Gamepad, Keyboard]
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should it feel like
+      description: A comparison helps — name a game and what it does differently.

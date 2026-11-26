@@ -1,0 +1,37 @@
+name: Feature request
+description: Propose new functionality or content
+labels: [enhancement, needs-triage]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve
+      description: Describe the player-facing problem, not the implementation.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Rough scope
+      options:
+        - Small — a parameter, a UI element, one script
+        - Medium — a new system touching a few assemblies
+        - Large — a new mode, multiplayer, or a content pipeline
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: licensing
+    attributes:
+      label: If this needs new assets
+      options:
+        - label: I confirm any assets would be CC0 or CC-BY, never from the Unity Asset Store
+          required: false
