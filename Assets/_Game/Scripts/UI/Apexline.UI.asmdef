@@ -1,0 +1,19 @@
+{
+    "name": "Apexline.UI",
+    "rootNamespace": "Apexline.UI",
+    "references": [
+        "Apexline.Vehicle",
+        "Apexline.Race",
+        "Apexline.AI",
+        "UnityEngine.UI"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

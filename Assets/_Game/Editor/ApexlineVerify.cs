@@ -26,6 +26,7 @@ namespace Apexline.EditorTools
         static void Near(float actual, float expected, string what, float tol = 0.001f)
             => Check(Mathf.Abs(actual - expected) <= tol, what, $"(got {actual}, want {expected})");
 
+        [MenuItem("Apexline/Verify Prefab and Scene", false, 40)]
         public static void Run()
         {
             _fail = 0;

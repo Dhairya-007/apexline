@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/_Game/Scenes/Circuit_Apexline.unity
+    guid: a670f84c2ef5d4771b03f26cdd027c89
+  - enabled: 1
     path: Assets/_Game/Scenes/TestTrack_Flat.unity
     guid: c21f209dbddec4d8d99465c5e411be7b
   m_configObjects: {}

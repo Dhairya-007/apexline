@@ -8,11 +8,22 @@ weight, baked lighting, and a licence you can actually ship.
 [![Assets: CC0 / CC-BY](https://img.shields.io/badge/assets-CC0%20%2F%20CC--BY-green.svg)](ASSET-LICENSES.md)
 [![Unity 6 LTS](https://img.shields.io/badge/Unity-6%20LTS-black.svg)](https://unity.com)
 
-> **Status: pre-alpha, but drivable.** Open
-> `Assets/_Game/Scenes/TestTrack_Flat.unity` and press Play: you can drive the
-> prototype car around a flat plane with a chase camera. 13 EditMode and 6
-> PlayMode tests pass. There is no real track, UI or audio yet.
+> **Status: pre-alpha, and playable.** Open
+> `Assets/_Game/Scenes/Circuit_Apexline.unity` and press Play: a 3-lap race
+> against five AI opponents on a 2.3 km circuit, with a HUD showing lap,
+> position and lap times. 25 EditMode and 22 PlayMode tests pass. No audio or
+> baked lighting yet.
 > See [`docs/ROADMAP.md`](docs/ROADMAP.md) for exactly what exists.
+
+## Play it
+
+**▶ [dhairya-007.github.io/apexline](https://dhairya-007.github.io/apexline/)** —
+runs in the browser, no install. ~15 MB download.
+
+**W** throttle · **S** brake · **A/D** steer · **Space** handbrake · **F1** telemetry
+
+> Unity WebGL is slower than a native build and the first load takes a moment.
+> For the best frame rate, build locally: `Apexline > Build > macOS`.
 
 ## Why this exists
 
@@ -46,6 +57,10 @@ fact. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 - Race state machine: grid, countdown, lap timing, live standings, sector-
   validated laps that cannot be cut
 - Chase camera with speed-based FOV and slide-triggered shake
+- A 3-lap race against five AI opponents with varied skill
+- A HUD with lap, position, current/last/best lap times, countdown and results
+- A 2.3 km circuit with banking, elevation, barriers, a racing line and
+  sector-validated lap timing — generated from one authored spline
 - A drivable prototype car and flat test scene, both generated headlessly
 - Repo hygiene CI that blocks licence and GUID mistakes before merge
 
@@ -59,7 +74,8 @@ git lfs install && git lfs pull
 ```
 
 Then open the folder in Unity Hub and press Play on
-`Assets/_Game/Scenes/TestTrack_Flat.unity`.
+`Assets/_Game/Scenes/Circuit_Apexline.unity` (the circuit) or
+`TestTrack_Flat` (a flat plane for handling work).
 
 **Controls (desktop):** `W` throttle, `S` brake, `A`/`D` steer, `Space`
 handbrake. Gamepad works too.
