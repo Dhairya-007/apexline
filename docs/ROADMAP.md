@@ -32,18 +32,32 @@ monetisation, more than one track, car upgrades, damage, weather.
 - [x] **All four assemblies compile with zero errors; 13/13 EditMode tests pass**
 - [x] Android Build Support installed (SDK, NDK, OpenJDK)
 
-**Not done: anything you can look at.** No scene, car prefab, track, UI or
-audio. The code is sound but nothing is wired into a GameObject yet.
+- [x] Car prototype prefab — RWD, 1300 kg, four WheelColliders on the
+      docs/TUNING.md reference values
+- [x] `ChaseCamera` with speed-based FOV and slip shake
+- [x] Flat test scene with a twelve-cone slalom, first in build settings
+- [x] **6 PlayMode tests proving it drives, brakes and steers the right way**
 
-## Day 1 — Get it driving
+**Not done: a real track, UI, audio or VFX.** It drives on a flat plane. That is
+Day 2 and Day 3.
 
-Project setup is already done, and it compiles. Start at the car prefab.
+## Day 1 — ✅ Done
+
+Project set up, compiling, and the car drives on a flat plane with a chase
+camera. Open `Assets/_Game/Scenes/TestTrack_Flat.unity` and press Play.
+
+Reference, if you need to rebuild it: `ApexlineScaffold.Build` recreates the
+prefab and scene, `ApexlineVerify.Run` checks the wiring.
+
+<details><summary>What Day 1 originally called for</summary>
 
 Build the car prefab: `Rigidbody` (mass 1300), four `WheelCollider`s, four
 visual wheels, wire up `CarController` with the reference values from
 [`TUNING.md`](TUNING.md). Flat plane, a few cones.
 
 **Done when:** you drive around a plane with a keyboard without flipping over.
+
+</details>
 
 ## Day 2 — Feel and camera
 

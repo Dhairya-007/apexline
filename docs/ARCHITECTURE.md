@@ -82,6 +82,14 @@ instead of being frozen, so they do not become track furniture.
 when every other sector has been crossed, which is what stops corner cutting
 from registering a valid lap.
 
+### Util
+
+**`ChaseCamera`** — follow camera with positional lag, speed-based FOV (60→75)
+and a Perlin-noise shake driven by `MaxLateralSlip` and `IsGrounded`. Runs in
+`LateUpdate` so it reads the car's interpolated transform at display rate.
+Hand-written rather than a Cinemachine rig because the camera is half of how a
+racing game feels and these three parameters are the ones worth tuning directly.
+
 ## Decisions worth knowing
 
 | Decision | Why | What it costs |
@@ -94,7 +102,14 @@ from registering a valid lap.
 | Waypoints, not a navmesh | Racing lines are 1-dimensional; navmesh solves a problem we do not have | Overtaking lines must be authored |
 | CC0 assets only | Legal redistributability is the point of the project | No Asset Store convenience |
 
+### Editor tools
+
+`ApexlineSetup` (packages), `ApexlineConfigure` (URP assets + mobile settings),
+`ApexlineScaffold` (materials, car prefab, test scene) and `ApexlineVerify`
+(53 wiring assertions). All runnable headlessly via `-executeMethod`, so the
+whole project can be rebuilt from a clone without clicking through the editor.
+
 ## Not built yet
 
-UI and HUD, audio, VFX, the track itself, car select, and the credits screen
-that CC-BY attribution requires. See [`ROADMAP.md`](ROADMAP.md).
+A real track, UI and HUD, audio, VFX, car select, and the credits screen that
+CC-BY attribution requires. See [`ROADMAP.md`](ROADMAP.md).

@@ -8,9 +8,10 @@ weight, baked lighting, and a licence you can actually ship.
 [![Assets: CC0 / CC-BY](https://img.shields.io/badge/assets-CC0%20%2F%20CC--BY-green.svg)](ASSET-LICENSES.md)
 [![Unity 6 LTS](https://img.shields.io/badge/Unity-6%20LTS-black.svg)](https://unity.com)
 
-> **Status: pre-alpha.** The Unity 6 project is set up and compiling — all four
-> assemblies build with zero errors and all 13 EditMode tests pass. There is no
-> track, car prefab, UI or audio yet, so it is not playable.
+> **Status: pre-alpha, but drivable.** Open
+> `Assets/_Game/Scenes/TestTrack_Flat.unity` and press Play: you can drive the
+> prototype car around a flat plane with a chase camera. 13 EditMode and 6
+> PlayMode tests pass. There is no real track, UI or audio yet.
 > See [`docs/ROADMAP.md`](docs/ROADMAP.md) for exactly what exists.
 
 ## Why this exists
@@ -44,6 +45,8 @@ fact. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
   per driver, and recovers when stuck
 - Race state machine: grid, countdown, lap timing, live standings, sector-
   validated laps that cannot be cut
+- Chase camera with speed-based FOV and slide-triggered shake
+- A drivable prototype car and flat test scene, both generated headlessly
 - Repo hygiene CI that blocks licence and GUID mistakes before merge
 
 ## Quick start
@@ -55,9 +58,14 @@ git lfs install && git lfs pull
 ./scripts/check-repo-hygiene.sh
 ```
 
-Then follow [`docs/SETUP.md`](docs/SETUP.md) — it covers installing the Unity
-editor, creating the project, the settings that are painful to change later, and
-getting a build onto an Android phone.
+Then open the folder in Unity Hub and press Play on
+`Assets/_Game/Scenes/TestTrack_Flat.unity`.
+
+**Controls (desktop):** `W` throttle, `S` brake, `A`/`D` steer, `Space`
+handbrake. Gamepad works too.
+
+[`docs/SETUP.md`](docs/SETUP.md) covers the Unity editor install and getting a
+build onto an Android phone.
 
 ## Documentation
 
