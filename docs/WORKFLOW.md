@@ -68,6 +68,10 @@ but if you use it on a secret-scan failure you have published a credential.
 ./scripts/scan-secrets.sh --history  # every commit (pre-push does this)
 shellcheck -S warning scripts/*.sh scripts/hooks/*.sh .githooks/*
 
+./scripts/unity-status.sh            # editor + Android module + project state
+./scripts/unity-log.sh               # Editor.log, credentials redacted
+./scripts/unity-log.sh --list        # which Unity logs exist
+
 adb devices
 adb logcat -s Unity
 adb shell dumpsys gfxinfo <package> framestats

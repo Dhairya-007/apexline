@@ -140,6 +140,32 @@ available to fork-authored code.
 
 ---
 
+## Commands that leak credentials
+
+Unity and Unity Hub pass secrets as **command-line arguments**, which every
+process on the machine can read:
+
+```
+Unity ... -accessToken <live token> -hubSessionId <id> -cbmEditorLicense <hash>
+```
+
+Unity also writes that whole command line into `Editor.log`, one argument per
+line.
+
+| ❌ Forbidden | ✅ Use instead |
+|---|---|
+| `ps aux`, `ps -ef`, `ps -eo args` | `./scripts/unity-status.sh` |
+| `pgrep -l`, `pgrep -af` | `pgrep -f <pat> \| wc -l` |
+| `cat ~/Library/Logs/Unity/Editor.log` | `./scripts/unity-log.sh` |
+| `printenv`, bare `env`, `export -p` | `printenv VARNAME` |
+
+`scripts/hooks/block-token-exposure.sh` denies these as a PreToolUse hook, and
+names the alternative in the refusal.
+
+**If a token does get printed:** it is a short-lived Hub session token, not in
+the repo. Don't paste that output anywhere. To invalidate it, sign out of Unity
+Hub and back in.
+
 ## Claude Code permissions
 
 Defined in [`.claude/settings.json`](../.claude/settings.json).

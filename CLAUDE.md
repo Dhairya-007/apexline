@@ -25,7 +25,13 @@ These are the rules that are expensive or impossible to fix later.
 6. **Never move a licensed CI job into `pull_request_target`.** That hands
    repository secrets to untrusted fork code. The fork skip in
    [`.github/workflows/ci.yml`](.github/workflows/ci.yml) is deliberate.
-7. **Do not commit, push or open a pull request unless asked.**
+7. **Never dump process arguments or the environment.** Unity passes
+   `-accessToken`, `-hubSessionId` and `-cbmEditorLicense` on the command line,
+   so `ps aux`, `ps -eo args`, `pgrep -l` and raw reads of `Editor.log` print a
+   live credential into the terminal and the transcript. Use
+   `./scripts/unity-status.sh` and `./scripts/unity-log.sh`. A PreToolUse hook
+   blocks the unsafe forms.
+8. **Do not commit, push or open a pull request unless asked.**
 
 ## Layout
 
@@ -53,6 +59,10 @@ shellcheck -S warning scripts/*.sh
 
 # Unity tests: Window > General > Test Runner > EditMode > Run All
 # There is no CLI test path configured; GameCI runs them on Linux in CI.
+
+./scripts/unity-status.sh            # editor/module/project state, token-safe
+./scripts/unity-log.sh               # Editor.log with credentials redacted
+./scripts/scan-secrets.sh --history  # every commit
 
 adb devices                                   # confirm a device before profiling
 adb logcat -s Unity                           # Unity log from the device
