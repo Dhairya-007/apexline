@@ -1,0 +1,13 @@
+version: 2
+updates:
+  # Unity packages are managed by Packages/manifest.json, which Dependabot does
+  # not understand, so this covers the part it can: pinned GitHub Actions.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "ci"
+    groups:
+      actions:
+        patterns: ["*"]
