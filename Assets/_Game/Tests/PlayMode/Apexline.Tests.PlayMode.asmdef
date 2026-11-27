@@ -6,7 +6,10 @@
         "Apexline.Vehicle",
         "Apexline.AI",
         "Apexline.Race",
-        "Apexline.Util"
+        "Apexline.Util",
+        "Apexline.Track",
+        "Apexline.UI",
+        "UnityEngine.UI"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

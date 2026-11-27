@@ -92,3 +92,10 @@ AssetImportWorker*.log
 # Unity 6 generates .slnx (the new solution format) alongside the old .sln
 *.slnx
 .vscode/
+
+# Player builds. A built player does not belong in the source repo;
+# WebGL output is deployed to GitHub Pages from a separate branch.
+/Build/
+
+# Generated screenshots used for reviewing the look of the game
+/Screenshots/

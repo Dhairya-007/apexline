@@ -42,7 +42,29 @@ Every asset directory must have a matching row. Keep paths repo-relative.
 
 | Path | Asset | Author | Source URL | License | Modified? |
 |---|---|---|---|---|---|
-| _(none yet)_ | | | | | |
+| `Assets/_Game/Textures/PBR/Asphalt026A_*` | Asphalt 026 A (1K JPG) | ambientCG | https://ambientcg.com/view?id=Asphalt026A | CC0 1.0 | Roughness recombined into a metallic/smoothness map |
+| `Assets/_Game/Textures/PBR/Grass004_*` | Grass 004 (1K JPG) | ambientCG | https://ambientcg.com/view?id=Grass004 | CC0 1.0 | Roughness recombined into a metallic/smoothness map |
+| `Assets/_Game/Textures/PBR/Concrete034_*` | Concrete 034 (1K JPG) | ambientCG | https://ambientcg.com/view?id=Concrete034 | CC0 1.0 | Roughness recombined into a metallic/smoothness map |
+| `Assets/_Game/Textures/HDRI/kloppenheim_06_puresky_2k.hdr` | Kloppenheim 06 Pure Sky (2K) | Poly Haven | https://polyhaven.com/a/kloppenheim_06_puresky | CC0 1.0 | None |
+
+All other art in this repository is generated procedurally by the editor tools
+in `Assets/_Game/Editor/`, and is therefore covered by the project's own MIT
+licence rather than a third-party one.
+
+### Licence verification
+
+Both sources were checked directly rather than assumed:
+
+- **ambientCG** — https://docs.ambientcg.com/license/ : *"All ambientCG assets
+  are provided under the Creative Commons CC0 1.0 Universal License"*, and
+  *"You can include the raw files in your project, for example a video game."*
+  Attribution is explicitly not required.
+- **Poly Haven** — https://polyhaven.com/license : *"Our assets are all
+  licensed as CC0"*, *"You can redistribute them... or even in a product you
+  sell"*. Attribution not required.
+
+Poly Haven's terms reserve its **logos, example renders, user renders and site
+text** — none of which are in this repository, and none of which may be added.
 
 ### How to add a row
 

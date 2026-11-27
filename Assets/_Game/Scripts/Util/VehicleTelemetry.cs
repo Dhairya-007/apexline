@@ -19,7 +19,9 @@ namespace Apexline.Util
         public CarController car;
         [Tooltip("Only used on the legacy input backend; the Input System path is hard-wired to F1.")]
         public KeyCode toggleKey = KeyCode.F1;
-        public bool visible = true;
+        // Off by default: it is a debug overlay and it sat on top of the race
+        // HUD in the first playable build. F1 brings it back.
+        public bool visible = false;
 
         [Tooltip("Peak values are held this long so a transient is readable.")]
         public float peakHoldSeconds = 2f;

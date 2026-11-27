@@ -24,6 +24,7 @@ namespace Apexline.EditorTools
         const string RendererPath  = SettingsDir + "/Apexline_Renderer.asset";
         const string PipelinePath  = SettingsDir + "/Apexline_URP.asset";
 
+        [MenuItem("Apexline/Reapply Project Settings", false, 41)]
         public static void Run()
         {
             int failed = 0;
@@ -35,6 +36,7 @@ namespace Apexline.EditorTools
             failed += Step("orientation",       () => PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft);
             failed += Step("fixed timestep",    () => Time.fixedDeltaTime = 0.02f);
             failed += Step("input backend",     SetInputBackend);
+            failed += Step("product identity",  SetProductIdentity);
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -94,6 +96,23 @@ namespace Apexline.EditorTools
                 GraphicsDeviceType.Vulkan,
                 GraphicsDeviceType.OpenGLES3,
             });
+        }
+
+        /// <summary>
+        /// Product and company name. These are user-visible: they become the
+        /// WebGL page title and the macOS app name. The project inherited
+        /// "bootstrap-project" from the throwaway project it was generated
+        /// from, which shipped as the browser tab title of the first build.
+        /// </summary>
+        static void SetProductIdentity()
+        {
+            PlayerSettings.productName = "Apexline";
+            PlayerSettings.companyName = "Apexline";
+            PlayerSettings.applicationIdentifier =
+                UnityEditor.Build.NamedBuildTarget.Android.ToBuildTargetGroup() == BuildTargetGroup.Android
+                    ? "io.github.dhairya007.apexline"
+                    : PlayerSettings.applicationIdentifier;
+            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, "io.github.dhairya007.apexline");
         }
 
         static void SetInputBackend()
