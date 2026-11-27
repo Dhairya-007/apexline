@@ -96,3 +96,6 @@ AssetImportWorker*.log
 # Player builds. A built player does not belong in the source repo;
 # WebGL output is deployed to GitHub Pages from a separate branch.
 /Build/
+
+# Generated screenshots used for reviewing the look of the game
+/Screenshots/
