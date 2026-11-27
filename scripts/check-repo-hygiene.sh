@@ -134,7 +134,13 @@ unregistered=""
 while read -r f; do
   [ -z "$f" ] && continue
   name=$(basename "$f")
-  if ! grep -qF "$name" ASSET-LICENSES.md 2>/dev/null; then
+  # Accept either the exact filename or the texture-set name it belongs to.
+  # A PBR set ships five maps that share one licence and one source URL;
+  # listing all five separately is noise, and the registry is more readable
+  # as one row per set.
+  stem="${name%%_*}"
+  if ! grep -qF "$name" ASSET-LICENSES.md 2>/dev/null &&
+     ! grep -qF "$stem" ASSET-LICENSES.md 2>/dev/null; then
     unregistered="${unregistered}${f}"$'\n'
   fi
 done < <(git ls-files 'Assets/_Game/Art/*' 'Assets/_Game/Audio/*' \

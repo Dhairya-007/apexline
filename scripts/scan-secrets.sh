@@ -56,15 +56,47 @@ is_allowlisted () {
   esac
 }
 
-scan_blob () {           # $1 = label, $2 = path, $3 = content on stdin
+# A binary file cannot contain a readable credential, and regex-scanning
+# megabytes of JPEG costs far more than it finds. Adding the first texture sets
+# took this scanner from under a second to fifty, which a pre-commit hook
+# cannot afford.
+is_binary () {
+  case "$1" in
+    *.jpg|*.jpeg|*.png|*.hdr|*.exr|*.tga|*.psd|*.tif|*.fbx|*.blend|*.obj|\
+    *.glb|*.gltf|*.wav|*.ogg|*.mp3|*.mp4|*.ttf|*.otf|*.dll|*.so|*.dylib)
+      return 0 ;;
+  esac
+  # Anything routed through LFS is binary by this repository's own definition.
+  if git check-attr filter -- "$1" 2>/dev/null | grep -q 'filter: lfs'; then
+    return 0
+  fi
+  return 1
+}
+
+# All patterns in one file, so each blob needs ONE grep instead of one per
+# pattern. With ~60 files and 16 patterns that is 60 greps rather than 960,
+# which took the scan from 29 seconds to under two.
+PATTERN_FILE=$(mktemp -t apexline-pat)
+trap 'rm -f "$PATTERN_FILE"' EXIT
+printf '%s\n' "$PATTERNS" > "$PATTERN_FILE"
+
+scan_blob () {           # $1 = label, $2 = path, content on stdin
   local label="$1" path="$2" content
   content=$(cat)
   is_allowlisted "$path" && return 0
+  is_binary "$path" && return 0
 
+  # Fast path: one grep for every pattern at once. Most files match nothing,
+  # so this is the only cost they pay.
+  if ! printf '%s' "$content" | grep -qE -f "$PATTERN_FILE" 2>/dev/null; then
+    return 0
+  fi
+
+  # Something matched, so now it is worth finding out WHICH pattern, to give a
+  # useful message. -e is mandatory: a pattern beginning with "-" (such as
+  # -accessToken) is otherwise parsed by grep as an option and never matches.
   while IFS= read -r pat; do
     [ -z "$pat" ] && continue
-    # -e is mandatory: a pattern beginning with "-" (e.g. -accessToken) is
-    # otherwise parsed by grep as an option and silently never matches.
     if printf '%s' "$content" | grep -qE -e "$pat" 2>/dev/null; then
       problem "$label: $path matches secret pattern /$pat/"
     fi
@@ -85,6 +117,7 @@ before=$fail
 while IFS= read -r f; do
   [ -z "$f" ] && continue
   [ -f "$f" ] || continue
+  is_binary "$f" && continue
   scan_blob "working tree" "$f" < "$f"
 done < <(git ls-files)
 [ "$fail" -eq "$before" ] && ok "No secret values in tracked files"
