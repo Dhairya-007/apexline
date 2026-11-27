@@ -156,6 +156,38 @@ namespace Apexline.EditorTools
             return Finish("Track_Road", verts, uvs, tris);
         }
 
+        /// <summary>
+        /// A painted edge line, lifted 2 cm so it does not z-fight the road.
+        /// </summary>
+        static Mesh BuildLineMesh(List<TrackSpline.Sample> s, int side)
+        {
+            const float inset = 0.45f, width = 0.22f, lift = 0.02f;
+            int n = s.Count;
+            var verts = new Vector3[n * 2];
+            var uvs = new Vector2[n * 2];
+
+            for (int i = 0; i < n; i++)
+            {
+                Vector3 edge = s[i].position + s[i].right * (side * (RoadHalf - inset));
+                Vector3 up = s[i].up * lift;
+                verts[i * 2 + 0] = edge + up;
+                verts[i * 2 + 1] = edge + s[i].right * (side * -width) + up;
+                uvs[i * 2 + 0] = new Vector2(0f, s[i].distance / 4f);
+                uvs[i * 2 + 1] = new Vector2(1f, s[i].distance / 4f);
+            }
+
+            var tris = new List<int>(n * 6);
+            for (int i = 0; i < n; i++)
+            {
+                int j = (i + 1) % n;
+                int a = i * 2, b = i * 2 + 1, c = j * 2, d = j * 2 + 1;
+                tris.Add(a); tris.Add(b); tris.Add(d);
+                tris.Add(a); tris.Add(d); tris.Add(c);
+            }
+            FixWinding(verts, tris);
+            return Finish($"Track_Line_{(side < 0 ? "L" : "R")}", verts, uvs, tris);
+        }
+
         /// <summary>A vertical wall along one edge. side is -1 for left, +1 for right.</summary>
         static Mesh BuildBarrierMesh(List<TrackSpline.Sample> s, int side, string name)
         {
@@ -269,6 +301,13 @@ namespace Apexline.EditorTools
 
             // --- road and barriers --------------------------------------
             MeshObject("Road", root, BuildRoadMesh(s), asphalt);
+
+            // Painted lines as their own geometry. The procedural asphalt used
+            // to carry them in its albedo; the PBR texture set does not, and
+            // a race track without edge lines reads as a car park.
+            Material paint = Mat("RoadPaint", new Color(0.86f, 0.86f, 0.83f), 0f, 0.25f);
+            MeshObject("Line_Left",  root, BuildLineMesh(s, -1), paint).GetComponent<MeshCollider>().enabled = false;
+            MeshObject("Line_Right", root, BuildLineMesh(s, +1), paint).GetComponent<MeshCollider>().enabled = false;
             MeshObject("Barrier_Left",  root, BuildBarrierMesh(s, -1, "Track_Barrier_L"), barrier);
             MeshObject("Barrier_Right", root, BuildBarrierMesh(s, +1, "Track_Barrier_R"), barrier);
 

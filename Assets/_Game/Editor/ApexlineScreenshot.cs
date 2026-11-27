@@ -66,7 +66,7 @@ namespace Apexline.EditorTools
                     string n = h.collider.gameObject.name;
                     if (n == "Road" || n == "Terrain") best = Mathf.Max(best, h.point.y);
                 }
-                if (best > float.MinValue) c.transform.position = new Vector3(p.x, best + 0.33f, p.z);
+                if (best > float.MinValue) c.transform.position = new Vector3(p.x, best + 0.28f, p.z);
             }
         }
 
