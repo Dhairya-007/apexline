@@ -35,8 +35,8 @@ namespace Apexline.EditorTools
         const float RoadHalf    = 6.0f;    // 12 m road
         const float Spacing     = 4.0f;    // mesh sample spacing, metres
         const float WaypointGap = 18.0f;
-        const float BarrierH    = 1.0f;
-        const float BarrierOut  = 1.5f;    // beyond the road edge
+        const float BarrierH    = 1.45f;
+        const float BarrierOut  = 1.1f;    // beyond the road edge
         const int   SectorCount = 4;
         const int   GridSlots   = 6;
 
@@ -52,6 +52,13 @@ namespace Apexline.EditorTools
         /// sweeper, a tight hairpin, an esse section and a climb back onto the
         /// straight. Y is elevation.
         /// </summary>
+        /// <summary>
+        /// Exposed so the environment builder derives its terrain, kerbs and
+        /// trees from the SAME control points. Two copies of the layout would
+        /// drift apart and put trees on the racing line.
+        /// </summary>
+        public static Vector3[] LayoutPoints => Layout;
+
         static readonly Vector3[] Layout =
         {
             new Vector3(   0f, 0f,    0f),   // start/finish
