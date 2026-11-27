@@ -19,9 +19,9 @@ namespace Apexline.Util
         public CarController target;
 
         [Header("Placement (local to the car)")]
-        public Vector3 offset = new Vector3(0f, 2.2f, -6.0f);
+        public Vector3 offset = new Vector3(0f, 1.35f, -4.6f);
         [Tooltip("Look at a point this far above the car's origin.")]
-        public float lookAtHeight = 1.0f;
+        public float lookAtHeight = 0.75f;
         [Tooltip("Aim this far ahead along the car's velocity, in seconds.")]
         public float leadSeconds = 0.25f;
 
@@ -30,8 +30,8 @@ namespace Apexline.Util
         public float rotationDamping = 0.10f;
 
         [Header("Field of view")]
-        public float fovAtRest = 60f;
-        public float fovAtTopSpeed = 75f;
+        public float fovAtRest = 64f;
+        public float fovAtTopSpeed = 82f;
 
         [Header("Shake")]
         [Tooltip("Shake amplitude when a wheel is sliding hard.")]

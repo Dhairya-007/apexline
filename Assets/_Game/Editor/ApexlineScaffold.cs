@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using Apexline.Util;
+using Apexline.Track;
 using Apexline.Vehicle;
 
 namespace Apexline.EditorTools
@@ -29,9 +30,9 @@ namespace Apexline.EditorTools
 
         // Wheel geometry. Radius 0.35 m is a realistic road-car wheel.
         const float WheelRadius  = 0.35f;
-        const float TrackHalf    = 0.8f;    // half the axle width
+        const float TrackHalf    = 0.78f;   // wheel outer edge 0.91 sits well under the 1.02 arch
         const float WheelBaseHalf = 1.35f;  // half the wheelbase
-        const float WheelY       = -0.1f;   // local height of the wheel centres
+        const float WheelY       = 0.05f;   // arch sill is 0.24, so the arch covers the wheel top
 
         [MenuItem("Apexline/Build Car Prefab + Flat Test Scene", false, 21)]
         public static void Build()
@@ -107,16 +108,18 @@ namespace Apexline.EditorTools
             rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 
             var box = root.AddComponent<BoxCollider>();
-            box.center = new Vector3(0f, 0.15f, 0f);
-            box.size = new Vector3(1.75f, 0.70f, 4.10f);
+            box.center = new Vector3(0f, 0.52f, 0f);
+            box.size = new Vector3(1.84f, 0.72f, 4.10f);
 
-            GameObject shell = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            shell.name = "BodyMesh";
-            Object.DestroyImmediate(shell.GetComponent<BoxCollider>());
+            // A lofted car silhouette, not a cube. The sill is narrower than the
+            // shoulder, which is what lets the wheels show below the bodywork -
+            // the old 1.75 m wide cube hid the 1.60 m track entirely.
+            Mesh bodyMesh = SaveMesh(CarMeshBuilder.Build(CarMeshBuilder.SportsCar), "Car_Body");
+
+            var shell = new GameObject("BodyMesh");
             shell.transform.SetParent(root.transform, false);
-            shell.transform.localPosition = new Vector3(0f, 0.15f, 0f);
-            shell.transform.localScale = new Vector3(1.75f, 0.70f, 4.10f);
-            shell.GetComponent<MeshRenderer>().sharedMaterial = bodyMat;
+            shell.AddComponent<MeshFilter>().sharedMesh = bodyMesh;
+            shell.AddComponent<MeshRenderer>().sharedMaterial = bodyMat;
 
             // --- wheels -------------------------------------------------
             var colliderRoot = new GameObject("WheelColliders");
@@ -135,6 +138,8 @@ namespace Apexline.EditorTools
             };
 
             var wheels = new List<CarController.Wheel>();
+            Mesh wheelMesh = SaveMesh(
+                CarMeshBuilder.BuildWheel(WheelRadius, 0.26f), "Car_Wheel");
 
             foreach (var w in layout)
             {
@@ -154,14 +159,13 @@ namespace Apexline.EditorTools
                 pivot.transform.SetParent(meshRoot.transform, false);
                 pivot.transform.localPosition = pos;
 
-                GameObject disc = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                disc.name = "Disc";
-                Object.DestroyImmediate(disc.GetComponent<CapsuleCollider>());
+                // A tyre ring with an inset rim face. Built around the X axis,
+                // so no corrective local rotation is needed and CarController
+                // can drive the pivot's rotation directly.
+                var disc = new GameObject("Disc");
                 disc.transform.SetParent(pivot.transform, false);
-                disc.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
-                // Cylinder primitive is 2 units tall and 1 unit across.
-                disc.transform.localScale = new Vector3(WheelRadius * 2f, 0.10f, WheelRadius * 2f);
-                disc.GetComponent<MeshRenderer>().sharedMaterial = wheelMat;
+                disc.AddComponent<MeshFilter>().sharedMesh = wheelMesh;
+                disc.AddComponent<MeshRenderer>().sharedMaterial = wheelMat;
 
                 wheels.Add(new CarController.Wheel
                 {
@@ -206,6 +210,16 @@ namespace Apexline.EditorTools
             GameObject saved = PrefabUtility.SaveAsPrefabAsset(root, CarPrefab);
             Object.DestroyImmediate(root);
             return saved;
+        }
+
+        /// <summary>Persists a generated mesh so the prefab can reference it.</summary>
+        static Mesh SaveMesh(Mesh m, string name)
+        {
+            Directory.CreateDirectory("Assets/_Game/Meshes");
+            string path = $"Assets/_Game/Meshes/{name}.asset";
+            AssetDatabase.DeleteAsset(path);
+            AssetDatabase.CreateAsset(m, path);
+            return AssetDatabase.LoadAssetAtPath<Mesh>(path);
         }
 
         static void ConfigureWheelCollider(WheelCollider wc)
