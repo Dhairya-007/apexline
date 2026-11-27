@@ -137,13 +137,15 @@ while read -r f; do
   if ! grep -qF "$name" ASSET-LICENSES.md 2>/dev/null; then
     unregistered="${unregistered}${f}"$'\n'
   fi
-done < <(git ls-files 'Assets/_Game/Art/*' 'Assets/_Game/Audio/*' | grep -vE '\.meta$|\.gitkeep$' || true)
+done < <(git ls-files 'Assets/_Game/Art/*' 'Assets/_Game/Audio/*' \
+                     'Assets/_Game/Textures/PBR/*' 'Assets/_Game/Textures/HDRI/*' \
+           | grep -vE '\.meta$|\.gitkeep$' || true)
 
 if [ -n "${unregistered//[$'\n']/}" ]; then
   problem "Art/audio files not listed in ASSET-LICENSES.md:"
   echo "$unregistered" | while read -r f; do [ -n "$f" ] && note "$f"; done
 else
-  ok "All art and audio is license-registered"
+  ok "All third-party art, audio and textures are license-registered"
 fi
 
 echo
